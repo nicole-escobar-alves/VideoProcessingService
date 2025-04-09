@@ -1,7 +1,9 @@
+import os
 import boto3
 from src.config import SQS_URL
 
-sqs = boto3.client("sqs")
+region = os.environ.get("AWS_REGION", "us-east-1")
+sqs = boto3.client("sqs", region_name=region)
 
 def receive_message():
     response = sqs.receive_message(

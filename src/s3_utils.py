@@ -1,10 +1,14 @@
 import boto3
 import os
+
 from src.config import BUCKET_NAME, OUTPUT_PREFIX
 from botocore.exceptions import BotoCoreError, ClientError
 from tqdm import tqdm
+from src.logger import get_logger
 
 s3 = boto3.client("s3")
+
+logger = get_logger(__name__)
 
 class UploadProgress:
     def __init__(self, filename: str):
@@ -25,12 +29,15 @@ class UploadProgress:
 def download_video_from_s3(root_path: str, key: str) -> str:
     
     video_path = os.path.join(root_path, os.path.basename(key))
-    print("VIDEO_PATH: " + video_path)
+    
+    logger.debug(f"Video salvo em: {video_path}.")
+    
     try:
         s3.download_file(BUCKET_NAME, key, video_path)
+        logger.debug(f"Download concluido: s3://{BUCKET_NAME}/{key}")  
         return video_path
     except (BotoCoreError, ClientError) as e:
-        print(f"[ERROR] Failed to download {key} from S3: {e}")
+        logger.error(f"Failed to download {key} from S3: {e}")
         raise
     
 
@@ -38,7 +45,8 @@ def upload_zip_to_s3(user_id: str, zip_path: str, original_key: str):
     nome_base = os.path.splitext(os.path.basename(original_key))[0]
     destino_key = f"{OUTPUT_PREFIX}/{nome_base}_{user_id}.zip"
     
-    print("Vai iniciar o Upload do video")
+    logger.debug("Vai iniciar o Upload do video no S3")
+    
     progress = UploadProgress(zip_path)
     
     try:
@@ -48,8 +56,8 @@ def upload_zip_to_s3(user_id: str, zip_path: str, original_key: str):
             Key=destino_key,
             Callback=progress
         )
-        print(f"Upload concluído: s3://{BUCKET_NAME}/{destino_key}")
+        logger.debug(f"Upload concluido: s3://{BUCKET_NAME}/{destino_key}")
     except (BotoCoreError, ClientError) as e:
-        print(f"[ERROR] Failed to upload {destino_key} to S3: {e}")
+        logger.error(f"Failed to upload {destino_key} to S3: {e}")
         raise
     

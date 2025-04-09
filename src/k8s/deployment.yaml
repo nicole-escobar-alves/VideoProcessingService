@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: video-worker
+  labels:
+    app: video-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: video-worker
+  template:
+    metadata:
+      labels:
+        app: video-worker
+    spec:
+      serviceAccountName: video-worker-sa
+      containers:
+        - name: video-worker
+          image: <seu-repo>/video-worker:latest
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: video-worker-config
+            - secretRef:
+                name: video-worker-secret
+          resources:
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
