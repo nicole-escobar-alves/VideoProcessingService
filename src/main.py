@@ -7,6 +7,7 @@ import shutil
 from src.sqs_worker import receive_message, delete_message
 from src.s3_utils import download_video_from_s3, upload_zip_to_s3
 from src.processor import extract_frames_to_zip, sanitize_video
+from src.external_service import send_zip
 from src.logger import get_logger
 
 CONCURRENCY_LIMIT = 5
@@ -41,6 +42,11 @@ def process_message(user_id: str, video_s3_key: str):
         upload_zip_to_s3(user_id, zip_path, video_s3_key)
     except Exception as e:
         logger.error(f"Erro ao tentar fazer upload do arquivo zip no S3: {e}")
+        
+    try:
+        send_zip(zip_path);
+    except Exception as e:
+        logger.error(f"Erro ao enviar a url s3 da pasta zip: {e}")
     
     try:     
         if os.path.isdir(root_dir):
@@ -62,6 +68,7 @@ async def handle_message(msg):
             await asyncio.to_thread(process_message, user_id, video_key)
             await asyncio.to_thread(delete_message, msg["ReceiptHandle"])
             logger.debug(f'Mensagem processada e deletada com sucesso.": {msg["ReceiptHandle"]}')
+            
             
         except Exception as e:
             logger.error(f"Erro ao processar mensagem: {e}")

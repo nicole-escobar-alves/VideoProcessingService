@@ -1,3 +1,4 @@
+from shlex import quote
 import boto3
 import os
 
@@ -45,7 +46,7 @@ def upload_zip_to_s3(user_id: str, zip_path: str, original_key: str):
     nome_base = os.path.splitext(os.path.basename(original_key))[0]
     destino_key = f"{OUTPUT_PREFIX}/{nome_base}_{user_id}.zip"
     
-    logger.debug("Vai iniciar o Upload do video no S3")
+    logger.debug(f"Iniciando upload de {zip_path} para s3://{BUCKET_NAME}/{destino_key}")
     
     progress = UploadProgress(zip_path)
     
@@ -56,8 +57,13 @@ def upload_zip_to_s3(user_id: str, zip_path: str, original_key: str):
             Key=destino_key,
             Callback=progress
         )
-        logger.debug(f"Upload concluido: s3://{BUCKET_NAME}/{destino_key}")
+        
+        url_zip_s3 = f"https://{BUCKET_NAME}.s3.amazonaws.com/{quote(destino_key)}"
+        
+        logger.debug(f"Upload concluido: s3:{url_zip_s3}")
+        
+        return url_zip_s3
     except (BotoCoreError, ClientError) as e:
-        logger.error(f"Failed to upload {destino_key} to S3: {e}")
+        logger.error(f"Erro ao fazer upload para s3://{BUCKET_NAME}/{destino_key}: {e}")
         raise
     

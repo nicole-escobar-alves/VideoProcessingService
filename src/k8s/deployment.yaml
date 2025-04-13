@@ -1,29 +1,28 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: video-worker
+  name: video-processing-service
   labels:
-    app: video-worker
+    app: video-processing-service
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: video-worker
+      app: video-processing-service
   template:
     metadata:
       labels:
-        app: video-worker
+        app: video-processing-service
     spec:
-      serviceAccountName: video-worker-sa
       containers:
-        - name: video-worker
-          image: <seu-repo>/video-worker:latest
+        - name: video-processing-service
+          image: 891377213431.dkr.ecr.us-east-1.amazonaws.com/video-processing-service:latest
           imagePullPolicy: Always
           envFrom:
             - configMapRef:
-                name: video-worker-config
+                name: video-processing-service-config
             - secretRef:
-                name: video-worker-secret
+                name: video-processing-service-secret
           resources:
             limits:
               memory: "1Gi"
