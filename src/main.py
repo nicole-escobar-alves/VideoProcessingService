@@ -15,7 +15,7 @@ sem = asyncio.Semaphore(CONCURRENCY_LIMIT)
 
 logger = get_logger(__name__)
 
-def process_message(user_id: str, video_s3_key: str):
+def process_message(user_id: str, video_id: str, video_s3_key: str):
     
     logger.debug(f"Processando vídeo do s3: {video_s3_key}")
     
@@ -23,31 +23,28 @@ def process_message(user_id: str, video_s3_key: str):
     os.makedirs(root_dir, exist_ok=True)
     
     try:
-        video_path = download_video_from_s3(root_dir, video_s3_key)
-    except Exception as e:
-        logger.error(f"Erro ao tentar fazer download do vídeo no S3: {e}")
-        return
-    try:    
-        sanitized_path = os.path.join(root_dir, "sanitized_" + os.path.basename(video_path))
-        sanitize_video(video_path, sanitized_path)
-    except Exception as e:
-        logger.error(f"Erro ao tentar remover legenda e áudio do vídeo: {e}")
-
-    try:
-        zip_path = extract_frames_to_zip(user_id, root_dir, sanitized_path)
-    except Exception as e:
-        logger.error(f"Erro ao tentar extrair os frames do vídeo: {e}")
-    
-    try:    
-        upload_zip_to_s3(user_id, zip_path, video_s3_key)
-    except Exception as e:
-        logger.error(f"Erro ao tentar fazer upload do arquivo zip no S3: {e}")
+        video_path = download_video_from_s3(root_dir, video_id, video_s3_key)
         
-    try:
-        send_zip(zip_path);
-    except Exception as e:
-        logger.error(f"Erro ao enviar a url s3 da pasta zip: {e}")
+        sanitized_path = os.path.join(root_dir, "sanitized_" + os.path.basename(video_path) + ".mp4")
+        sanitize_video(video_path, sanitized_path)
     
+        zip_path = extract_frames_to_zip(user_id, video_id, root_dir, sanitized_path)
+    
+        upload_zip_to_s3(user_id, video_id, zip_path, video_s3_key)
+        
+        #send_zip(user_id, zip_path, video_id);
+           
+        logger.info(f"Processamento do vídeo {video_id} concluído com sucesso.")
+        
+    except Exception as e:
+        logger.error(f"Erro no processamento do vídeo {video_id}: {e}")
+    
+    #finally:
+    #    delete_folder(root_dir)
+    
+    
+
+def delete_folder(root_dir: str):
     try:     
         if os.path.isdir(root_dir):
             shutil.rmtree(root_dir)
@@ -56,18 +53,19 @@ def process_message(user_id: str, video_s3_key: str):
             logger.warning(f"Pasta não encontrada: {root_dir}")
     except Exception as e:
         logger.error(f"Erro ao tentar deletar as pastas criadas: {e}")
-
+    
 
 async def handle_message(msg):
     async with sem:
         try:
             corpo = json.loads(msg["Body"])
             video_key = corpo["video_UrlS3"]
+            video_id = str(corpo["video_id"])
             user_id = str(corpo["user_id"])
 
-            await asyncio.to_thread(process_message, user_id, video_key)
+            await asyncio.to_thread(process_message, user_id, video_id, video_key)
             await asyncio.to_thread(delete_message, msg["ReceiptHandle"])
-            logger.debug(f'Mensagem processada e deletada com sucesso.": {msg["ReceiptHandle"]}')
+            logger.debug(f'Mensagem processada e deletada com sucesso.": {msg["MessageId"]}')
             
             
         except Exception as e:

@@ -27,9 +27,9 @@ class UploadProgress:
     def __call__(self, bytes_transferred: int):
         self._progress_bar.update(bytes_transferred)
 
-def download_video_from_s3(root_path: str, key: str) -> str:
+def download_video_from_s3(root_path: str, video_id:str, key: str) -> str:
     
-    video_path = os.path.join(root_path, os.path.basename(key))
+    video_path = os.path.join(root_path, os.path.basename(video_id))
     
     logger.debug(f"Video salvo em: {video_path}.")
     
@@ -42,9 +42,14 @@ def download_video_from_s3(root_path: str, key: str) -> str:
         raise
     
 
-def upload_zip_to_s3(user_id: str, zip_path: str, original_key: str):
+def upload_zip_to_s3(user_id: str, video_id: str, zip_path: str, original_key: str):
+    
+    if not os.path.exists(zip_path):
+        logger.error(f"Arquivo zip não encontrado: {zip_path}")
+        raise FileNotFoundError(f"Arquivo zip não encontrado: {zip_path}")
+    
     nome_base = os.path.splitext(os.path.basename(original_key))[0]
-    destino_key = f"{OUTPUT_PREFIX}/{nome_base}_{user_id}.zip"
+    destino_key = f"{OUTPUT_PREFIX}/{user_id}/{nome_base}_{video_id}.zip"
     
     logger.debug(f"Iniciando upload de {zip_path} para s3://{BUCKET_NAME}/{destino_key}")
     
@@ -55,6 +60,7 @@ def upload_zip_to_s3(user_id: str, zip_path: str, original_key: str):
             Filename=zip_path,
             Bucket=BUCKET_NAME,
             Key=destino_key,
+            ExtraArgs={"ACL": "private"},
             Callback=progress
         )
         

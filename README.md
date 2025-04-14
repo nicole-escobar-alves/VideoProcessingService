@@ -32,3 +32,9 @@ $ docker tag video-processing-service:latest 891377213431.dkr.ecr.us-east-1.amaz
 
 # 5. Push
 $ docker push 891377213431.dkr.ecr.us-east-1.amazonaws.com/video-processing-service:latest
+
+# Para rodar o teste
+
+Na raíz do projeto rodar
+
+$ $python -m pytest

@@ -1,13 +1,13 @@
 import os
 import boto3
-from src.config import SQS_URL
+from src.config import SQS_UPDATE_URL
 
 region = os.environ.get("AWS_REGION", "us-east-1")
 sqs = boto3.client("sqs", region_name=region)
 
 def receive_message():
     response = sqs.receive_message(
-        QueueUrl=SQS_URL,
+        QueueUrl=SQS_UPDATE_URL,
         MaxNumberOfMessages=5,
         WaitTimeSeconds=10,
         VisibilityTimeout=30
@@ -16,6 +16,6 @@ def receive_message():
 
 def delete_message(receipt_handle):
     sqs.delete_message(
-        QueueUrl=SQS_URL,
+        QueueUrl=SQS_UPDATE_URL,
         ReceiptHandle=receipt_handle
     )

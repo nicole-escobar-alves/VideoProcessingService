@@ -28,41 +28,55 @@ def sanitize_video(input_path: str, output_path: str) -> None:
     except subprocess.CalledProcessError as e:
         logger.error("Erro ao sanitizar vídeo:", e.stderr.decode())
         
-def extract_frames_to_zip(user_id: str, root_path: str, video_s3_path: str) -> str:
+def extract_frames_to_zip(user_id: str, video_id: str, root_path: str, video_s3_path: str) -> str:
 
     cap = cv2.VideoCapture(video_s3_path)
-    frame_count = 0
     
-    frames_dir = os.path.join(root_path, f"{user_id}_frames")
+    if not cap.isOpened():
+        logger.error(f"Não foi possível abrir o vídeo: {video_s3_path}")
+        raise ValueError(f"Falha ao abrir vídeo: {video_s3_path}")
+    
+    frame_count = 0
+    extracted_count = 0
+    
+    frames_dir = os.path.join(root_path, f"{video_id}_frames")
     os.makedirs(frames_dir, exist_ok=True)
     
     frame_skip = 10
     scale = 0.5
     quality_weight = 70
     
-    while True:
-        ret, frame = cap.read()
-        if not ret:
-            break
+    try:
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                break
+            
+            if frame_count % frame_skip == 0:
+                frame_path = os.path.join(frames_dir, f"frame_{frame_count:04d}.jpg")
+                resized = cv2.resize(frame, (0, 0), fx=scale, fy=scale)
+                cv2.imwrite(frame_path, resized, [int(cv2.IMWRITE_JPEG_QUALITY), quality_weight])
+                extracted_count += 1
+                
+            frame_count += 1
         
-        if frame_count % frame_skip == 0:
-            frame_path = os.path.join(frames_dir, f"frame_{frame_count:04d}.jpg")
-            resized = cv2.resize(frame, (0, 0), fx=scale, fy=scale)
-            cv2.imwrite(frame_path, resized, [int(cv2.IMWRITE_JPEG_QUALITY), quality_weight])
-        frame_count += 1
+        logger.debug(f"{extracted_count} frames extraídos de {frame_count} frames totais.")
 
-    cap.release()
+        zip_path = os.path.join(root_path, f"{video_id}_frames.zip")
+        
+        with ZipFile(zip_path, 'w') as zipf:
+            for filename in os.listdir(frames_dir):
+                full_path = os.path.join(frames_dir, filename)
+                zipf.write(full_path, arcname=filename)
+        
+        logger.debug(f"Pasta zip criada no caminho: {zip_path}.")
+        
+        return zip_path
+        
+    except subprocess.CalledProcessError as e:
+        logger.error(f"Erro ao processar vídeo {video_id}: {e}")
+        raise
     
-    logger.debug(f"Frames extraídos. Tamanho: {frame_count}." 
-                 "\n Vai iniciar a criação do .zip")
-
-    zip_path = os.path.join(root_path, f"{user_id}_frames.zip")
+    finally:
+        cap.release()
     
-    with ZipFile(zip_path, 'w') as zipf:
-        for filename in os.listdir(frames_dir):
-            full_path = os.path.join(frames_dir, filename)
-            zipf.write(full_path, arcname=filename)
-    
-    logger.debug(f"Pasta zip criada no caminho: {zip_path}.")
-    
-    return zip_path
