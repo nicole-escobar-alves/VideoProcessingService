@@ -19,7 +19,7 @@ def process_message(user_id: str, video_id: str, video_s3_key: str):
     
     logger.debug(f"Processando vídeo do s3: {video_s3_key}")
     
-    root_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "VideosFolder", user_id)
+    root_dir = os.path.join("/tmp", "VideosFolder", user_id)
     os.makedirs(root_dir, exist_ok=True)
     
     try:
