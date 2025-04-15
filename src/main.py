@@ -30,17 +30,17 @@ def process_message(user_id: str, video_id: str, video_s3_key: str):
     
         zip_path = extract_frames_to_zip(user_id, video_id, root_dir, sanitized_path)
     
-        upload_zip_to_s3(user_id, video_id, zip_path, video_s3_key)
+        url_zip_s3 = upload_zip_to_s3(user_id, video_id, zip_path, video_s3_key)
         
-        #send_zip(user_id, zip_path, video_id);
+        send_zip(user_id, url_zip_s3, video_id)
            
         logger.info(f"Processamento do vídeo {video_id} concluído com sucesso.")
         
     except Exception as e:
         logger.error(f"Erro no processamento do vídeo {video_id}: {e}")
     
-    #finally:
-    #    delete_folder(root_dir)
+    finally:
+       delete_folder(root_dir)
     
     
 

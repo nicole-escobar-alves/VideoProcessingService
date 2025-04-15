@@ -23,7 +23,7 @@ resource "aws_ecs_task_definition" "video_mgmt_task" {
       environment = [
         {
           name  = "SQS_UPDATE_URL"
-          value = data.aws_sqs_queue.SQS_UPDATE_URL
+          value = data.aws_sqs_queue.video_uploaded.url
         },
         {
           name  = "BUCKET_NAME"
@@ -38,16 +38,8 @@ resource "aws_ecs_task_definition" "video_mgmt_task" {
           value = var.region
         },
         {
-          name  = "AWS_ACCESS_KEY_ID"
-          value = data.aws_sqs_queue.video_uploaded.url
-        },
-        {
-          name  = "AWS_SECRET_ACCESS_KEY"
-          value = data.aws_sqs_queue.video_uploaded.url
-        },
-        {
-          name  = "AWS_SESSION_TOKEN"
-          value = data.aws_sqs_queue.video_uploaded.url
+          name = "VIDEO_MANAGEMENT_URL"
+          value = var.video_management_url
         }
       ]
       logConfiguration = {
@@ -78,11 +70,4 @@ resource "aws_ecs_service" "video_mgmt_service" {
     assign_public_ip = false
   }
 
-  load_balancer {
-    target_group_arn = aws_lb_target_group.video_mgmt_tg.arn
-    container_name   = "video-processing-service"
-    container_port   = 8080
-  }
-
-  depends_on = [aws_lb_listener_rule.video_mgmt_rule]
 }

@@ -1,6 +1,6 @@
 
 resource "aws_security_group" "app_sg" {
-  name        = "video-mgmt-sg"
+  name        = "video-process-service-sg"
   description = "Security Group for Video Processing Service ECS"
   vpc_id      = var.vpc_id
 
