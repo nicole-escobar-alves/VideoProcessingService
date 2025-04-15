@@ -14,10 +14,10 @@ jobs:
 
     steps:
     - name: Check out the code
-      uses: actions/checkout@v2 
+      uses: actions/checkout@v4 
 
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
         python-version: '3.11'
 
@@ -30,27 +30,27 @@ jobs:
 
     - name: Run tests
       run: |
+        mkdir -p test-reports
         source venv/bin/activate
-        python -m pytest
+        python -m pytest --junitxml=test-reports/results.xml
 
-    - name: Upload test results (optional)
-      if: failure() 
-      uses: actions/upload-artifact@v2
+    - name: Upload test results (se falhar)
+      if: failure()
+      uses: actions/upload-artifact@v4
       with:
         name: test-results
         path: test-reports/
 
-  # Job de deploy 
   deploy:
     runs-on: ubuntu-latest
     needs: test
 
     steps:
     - name: Check out the code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
         python-version: '3.11'
 
