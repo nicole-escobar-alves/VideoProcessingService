@@ -2,5 +2,5 @@ boto3
 opencv-python-headless
 python-dotenv
 tqdm>=4.0.0
-moto[aws]==4.2.14
+moto==4.2.14
 pytest
