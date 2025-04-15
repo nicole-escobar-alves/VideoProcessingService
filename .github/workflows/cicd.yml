@@ -31,7 +31,7 @@ jobs:
     - name: Run tests
       run: |
         source venv/bin/activate
-        pytest
+        python -m pytest
 
     - name: Upload test results (optional)
       if: failure() 
