@@ -1,6 +1,6 @@
 import os
 import tempfile
-from moto import mock_aws
+from moto import mock_s3
 import boto3
 from unittest.mock import patch, MagicMock
 from botocore.exceptions import ClientError
@@ -9,7 +9,7 @@ import pytest
 from src.s3_utils import download_video_from_s3, upload_zip_to_s3
 from src.config import BUCKET_NAME, OUTPUT_PREFIX
 
-@mock_aws
+@mock_s3
 def test_download_video_from_s3():
     
     # Cria o mock do cliente S3
@@ -34,7 +34,7 @@ def test_download_video_from_s3():
     assert open(result, "rb").read() == b"fake video content"
     assert result == expected_path
     
-@mock_aws
+@mock_s3
 def test_upload_zip_to_s3_success():
     # Configuração do mock S3
     s3 = boto3.client("s3", region_name="us-east-1")
@@ -67,7 +67,7 @@ def test_upload_zip_to_s3_success():
     # Limpeza após o teste
     os.remove(zip_path)
     
-@mock_aws
+@mock_s3
 def test_upload_zip_to_s3_file_not_found():
     # Mock para o S3
     s3 = boto3.client("s3", region_name="us-east-1")
