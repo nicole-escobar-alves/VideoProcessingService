@@ -56,7 +56,7 @@ def test_upload_zip_to_s3_success():
     result_url = upload_zip_to_s3(user_id, video_id, zip_path, original_key)
     
     # Verificando se a URL gerada está correta
-    expected_url = f"https://{BUCKET_NAME}.s3.amazonaws.com/{OUTPUT_PREFIX}/{user_id}/{os.path.splitext(os.path.basename(original_key))[0]}_{video_id}.zip"
+    expected_url = f"{OUTPUT_PREFIX}/{user_id}/{os.path.splitext(os.path.basename(original_key))[0]}_{video_id}.zip"
     assert result_url == expected_url
 
     # Verificando se o arquivo foi realmente enviado para o mock S3
