@@ -68,7 +68,7 @@ def upload_zip_to_s3(user_id: str, video_id: str, zip_path: str, original_key: s
         
         logger.debug(f"Upload concluido: s3:{url_zip_s3}")
         
-        return url_zip_s3
+        return destino_key
     except (BotoCoreError, ClientError) as e:
         logger.error(f"Erro ao fazer upload para s3://{BUCKET_NAME}/{destino_key}: {e}")
         raise

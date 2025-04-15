@@ -1,6 +1,10 @@
-bucket_name   = "video-storage-bucket"
-output_prefix = "processed"
-
-AWS_ACCESS_KEY_ID     = ""
-AWS_SECRET_ACCESS_KEY = ""
-AWS_SESSION_TOKEN     = ""
+subnet_ids                   = ["subnet-025a35cd6a72520c1", "subnet-02741e815d4889ffc"]
+vpc_id                       = "vpc-0bad64cc691718ddf"
+image_url                    = "010613378779.dkr.ecr.us-east-1.amazonaws.com/video-process-service:3.1"
+region                       = "us-east-1"
+labsrole_arn                 = "arn:aws:iam::010613378779:role/LabRole"
+video_cluster_name           = "video-cluster"
+bucket_name                  = "010613378779-video-storage-bucket"
+output_prefix                = "processed"
+video_uploaded_queue_name    = "video_uploaded"
+video_management_url         = "http://internal-shared-alb-1139275681.us-east-1.elb.amazonaws.com/video-management"
