@@ -28,7 +28,7 @@ def sanitize_video(input_path: str, output_path: str) -> None:
     except subprocess.CalledProcessError as e:
         logger.error("Erro ao sanitizar vídeo:", e.stderr.decode())
         
-def extract_frames_to_zip(user_id: str, video_id: str, root_path: str, video_s3_path: str) -> str:
+def extract_frames_to_zip(video_id: str, root_path: str, video_s3_path: str) -> str:
 
     cap = cv2.VideoCapture(video_s3_path)
     

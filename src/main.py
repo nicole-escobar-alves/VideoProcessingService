@@ -28,7 +28,7 @@ def process_message(user_id: str, video_id: str, video_s3_key: str):
         sanitized_path = os.path.join(root_dir, "sanitized_" + os.path.basename(video_path) + ".mp4")
         sanitize_video(video_path, sanitized_path)
     
-        zip_path = extract_frames_to_zip(user_id, video_id, root_dir, sanitized_path)
+        zip_path = extract_frames_to_zip(video_id, root_dir, sanitized_path)
     
         destino_key = upload_zip_to_s3(user_id, video_id, zip_path, video_s3_key)
         
