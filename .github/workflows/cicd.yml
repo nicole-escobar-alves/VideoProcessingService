@@ -27,12 +27,13 @@ jobs:
         source venv/bin/activate
         pip install --upgrade pip
         pip install -r requirements.txt
+        pip install pytest pytest-cov
 
-    - name: Run tests
+    - name: Run tests with coverage
       run: |
-        mkdir -p test-reports
         source venv/bin/activate
-        python -m pytest --junitxml=test-reports/results.xml
+        mkdir -p test-reports
+        pytest --cov=src --cov-report=xml --junitxml=test-reports/results.xml
 
     - name: Upload test results (se falhar)
       if: failure()
@@ -40,6 +41,13 @@ jobs:
       with:
         name: test-results
         path: test-reports/
+
+    - name: SonarCloud Scan
+      uses: SonarSource/sonarcloud-github-action@master
+      with:
+        projectBaseDir: .
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   deploy:
     runs-on: ubuntu-latest

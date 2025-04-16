@@ -37,4 +37,10 @@ $ docker push 891377213431.dkr.ecr.us-east-1.amazonaws.com/video-processing-serv
 
 Na raíz do projeto rodar
 
-$ $python -m pytest
+$ python -m pytest
+
+# Gerar relatório pytest
+
+$ pip install pytest pytest-cov
+
+$ python -m pytest --cov=src --cov-report=xml
