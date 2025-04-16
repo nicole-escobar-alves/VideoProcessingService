@@ -8,18 +8,6 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
-  sonarqube-windows:
-    name: SonarQube Windows
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v5
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
   sonarqube-cloud:
     name: SonarQube Cloud
     runs-on: ubuntu-latest
