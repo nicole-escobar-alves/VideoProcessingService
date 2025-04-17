@@ -48,6 +48,8 @@ if __name__ == "__main__":
     
 class TestExtractFramesToZip(unittest.TestCase):
 
+    @mock.patch("builtins.open", new_callable=mock.mock_open)
+    @mock.patch("zipfile.ZipFile.write")
     @mock.patch("os.makedirs")
     @mock.patch("cv2.resize")
     @mock.patch("cv2.imwrite")

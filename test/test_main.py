@@ -8,7 +8,7 @@ from src.main import handle_message  # ajuste o nome do módulo
 
 class TestHandleMessage(unittest.IsolatedAsyncioTestCase):
 
-    @mock.patch("src.sqs_workder.delete_message")
+    @mock.patch("src.sqs_worker.delete_message")
     @mock.patch("src.main.process_message")
     @mock.patch("src.logger")
     @mock.patch("src.main.sem", new=asyncio.Semaphore(1))
@@ -32,7 +32,7 @@ class TestHandleMessage(unittest.IsolatedAsyncioTestCase):
         # Verificar se log de sucesso foi chamado
         mock_logger.debug.assert_called_with('Mensagem processada e deletada com sucesso.": msg789')
 
-    @mock.patch("src.sqs_workder.delete_message")
+    @mock.patch("src.sqs_worker.delete_message")
     @mock.patch("src.main.process_message")
     @mock.patch("src.logger")
     @mock.patch("src.main.sem", new=asyncio.Semaphore(1))
