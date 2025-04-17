@@ -10,7 +10,7 @@ from src.s3_utils import download_video_from_s3, upload_zip_to_s3
 from src.config import BUCKET_NAME, OUTPUT_PREFIX
 
 #@mock_aws
-@mock_aws
+@mock_s3
 def test_download_video_from_s3():
     
     # Cria o mock do cliente S3
