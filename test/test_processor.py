@@ -4,7 +4,7 @@ import tempfile
 import zipfile
 import numpy as np
 import pytest
-from src.processor import extract_frames_to_zip  # <-- substitua pelo caminho correto
+from src.processor import extract_frames_to_zip
 
 def create_dummy_video(path, frame_count=50, width=640, height=480, fps=30):
     fourcc = cv2.VideoWriter_fourcc(*'XVID')
@@ -19,12 +19,11 @@ def test_extract_frames_to_zip():
         video_path = os.path.join(tmpdir, "test_video.avi")
         create_dummy_video(video_path)
 
-        user_id = "test_user"
         video_id = "test_video"
         root_path = tmpdir
         video_s3_path = video_path
 
-        zip_path = extract_frames_to_zip(user_id, video_id, root_path, video_s3_path)
+        zip_path = extract_frames_to_zip(video_id, root_path, video_s3_path)
 
         # Verificar se o arquivo zip foi criado
         assert os.path.isfile(zip_path), "Arquivo zip não foi criado."
