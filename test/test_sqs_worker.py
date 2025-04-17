@@ -5,7 +5,7 @@ import os
 
 from src import sqs_worker
 
-@mock_aws
+@mock_sqs
 def test_receive_message_returns_messages():
     # Configura o mock SQS
     sqs = boto3.client("sqs", region_name="us-east-1")
