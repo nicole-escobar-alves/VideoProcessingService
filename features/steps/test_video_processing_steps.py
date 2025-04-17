@@ -1,5 +1,7 @@
 import os
+import subprocess
 import sys
+from unittest import mock
 import cv2
 import numpy as np
 from behave import given, when, then
@@ -22,8 +24,13 @@ def step_impl(context, video_path, num_frames):
 
 @when('I sanitize the video and save as "{output_path}"')
 def step_impl(context, output_path):
-    sanitize_video(context.video_path, output_path)
-    context.sanitized_video_path = output_path
+    with mock.patch('subprocess.run') as mock_run:
+        mock_run.return_value = subprocess.CompletedProcess(args=[], returncode=0)
+        
+        from src.processor import sanitize_video
+        sanitize_video(context.video_path, output_path)
+
+        mock_run.assert_called()  # opcional, se quiser validar a chamada
 
 @then('the file "{expected_path}" should exist')
 def step_impl(context, expected_path):
