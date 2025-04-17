@@ -34,6 +34,11 @@ jobs:
         source venv/bin/activate
         mkdir -p test-reports
         pytest --cov=src --cov-report=xml --junitxml=test-reports/results.xml
+    
+    - name: Run BDD tests
+      run: |
+        source venv/bin/activate
+        python -m behave
 
     - name: Upload test results (se falhar)
       if: failure()

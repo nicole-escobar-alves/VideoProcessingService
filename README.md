@@ -44,3 +44,7 @@ $ python -m pytest
 $ pip install pytest pytest-cov
 
 $ python -m pytest --cov=src --cov-report=xml
+
+Teste BDD
+
+$ python -m behave
