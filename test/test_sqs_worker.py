@@ -1,6 +1,6 @@
 import boto3
 import pytest
-from moto import mock_sqs
+from moto.sqs import mock_sqs
 import os
 
 from src import sqs_worker

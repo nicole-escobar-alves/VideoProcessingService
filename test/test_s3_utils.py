@@ -1,6 +1,6 @@
 import os
 import tempfile
-from moto import mock_s3
+from moto.s3 import mock_s3
 import boto3
 from unittest.mock import patch, MagicMock
 from botocore.exceptions import ClientError
@@ -27,7 +27,7 @@ def test_download_video_from_s3():
     expected_path = os.path.join(root_path, os.path.basename(video_id)) 
     
     from src import s3_utils
-    s3_utils.s3 = s3  # injeta o s3 fake no módulo  
+    s3_utils.s3 = s3
     
     result = download_video_from_s3(root_path, video_id, video_key)
     
