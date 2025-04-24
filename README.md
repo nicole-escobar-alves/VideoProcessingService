@@ -1,4 +1,24 @@
-# VideoPrecessorService
+<h3 align="center">Fast Food API - Tech Challenge - 8SOAT FIAP</h3>
+
+---
+
+<p align="center"> Infra estrutura AWS desenvolvido por alunos do Pós Tech - FIAP. Fase 3.
+    <br> 
+</p>
+
+## 📝 Índice
+
+- [Sobre](#about)
+- [Comece por aqui](#getting_started)
+- [Sonar](#sonar)
+- [Ferramentas](#built_using)
+- [Desenvolvedores](#authors)
+
+## 🧐 Sobre <a name = "about"></a>
+
+Este microserviço é responsável por processar os vídeos armazenados no S3 Bucket, extrair os frames, armazenar em pasta zip e enviar o zip de volta para o S3. Após este processo, é enviado uma msg para o SQS com o url da pasta zip. 
+
+## 🏁 Comece por aqui <a name = "getting_started"></a>
 
 # Docker - Para rodar o projeto no docker
 
@@ -48,3 +68,38 @@ $ python -m pytest --cov=src --cov-report=xml
 Teste BDD
 
 $ python -m behave
+
+
+### Terraform
+Para rodar o projeto usando o terraform, é necessário seguir as etapas abaixo.
+
+1. Instalar terraform. (Consulte: [Ferramentas](#built_using))
+
+2. No powershell, como administrador, execute o seguinte comando para criar a estrutura:
+```
+$ terraform init
+$ terraform validate
+$ terraform plan
+$ terraform apply
+```
+2. No powershell, como administrador, execute o seguinte comando para destruir a estrutura:
+```
+$ terraform destroy
+```
+
+## 🏁 Sonar <a name = "sonar"></a>
+
+Integração com o Sonar Qube. 
+
+[<img src="images/Sonar.JPG" width="500" height="300"/>]
+
+## ⛏️ Ferramentas <a name = "built_using"></a>
+
+- [Terraform](https://www.terraform.io//) - Terraform.
+
+## ✍️ Desenvolvedores <a name = "authors"></a>
+
+- Handryo Casali
+- Nicole Escobar Alves
+- Luis Henrique Carreira
+- Victor Hugo Silva Lima

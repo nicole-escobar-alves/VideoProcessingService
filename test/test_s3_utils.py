@@ -1,6 +1,6 @@
 import os
 import tempfile
-from moto.s3 import mock_s3
+from moto import mock_s3
 import boto3
 from unittest.mock import patch, MagicMock
 from botocore.exceptions import ClientError
